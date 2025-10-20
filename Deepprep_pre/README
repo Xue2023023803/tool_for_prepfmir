@@ -1,0 +1,69 @@
+数据目录要求
+
+原始数据为每被试、每会话一套 DICOM：
+
+dataset/
+├── sub-01/
+│   ├── ses-01/  <DICOM…>
+│   └── ses-02/  <DICOM…>
+└── sub-02/
+
+
+如果你的目录是纯数字（例如 01/01），可以先加前缀：
+
+python add_bids_prefixes.py --root ./dataset --commit
+
+最快上手（已准备好启发式规则）
+
+赋予可执行权限
+
+chmod +x 2BIDS_2_final.sh
+
+
+编辑脚本开头的配置（被试/会话范围、日志目录等）：
+
+start_subject_id=1
+end_subject_id=10
+start_session_id=1
+end_session_id=3
+LOG_DIR="/path/to/logs"
+
+
+运行最终转换
+
+./2BIDS_2_final.sh
+
+
+验证输出
+
+bids-validator BIDS_number
+
+如果还没有启发式规则
+
+先跑一次初步转换（探索序列）：
+
+chmod +x 2BIDS_1.sh
+./2BIDS_1.sh    # 输出在 outBIDS/
+
+
+根据 outBIDS/ 的结果与日志，编辑 heuristic_final.py
+
+再运行最终转换：
+
+./2BIDS_2_final.sh   # 输出在 BIDS_number/
+
+常见问题（超短版）
+
+NOT_INCLUDED 命名报错：清理非 BIDS 文件或加入 .bidsignore
+
+权限问题：对输入/输出目录执行 chown -R 或 chmod -R；Docker 挂载加 :rw
+
+内存不足：减少并行或分批次处理
+
+目录不是 sub-XX/ses-YY：用 add_bids_prefixes.py 先修正
+
+输出目录
+
+初步：outBIDS/
+
+最终：BIDS_number/
